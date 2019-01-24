@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func testShowIndexPageUnauthenticated(t *testing.T) {
+func TestShowIndexPageUnauthenticated(t *testing.T) {
 	r := getRouter(true)
 	r.GET("/", showIndexPage)
 
@@ -21,5 +21,35 @@ func testShowIndexPageUnauthenticated(t *testing.T) {
 		pageOK := err == nil && strings.Index(string(p), "<title>Home page</title>") > 0
 
 		return statusOK && pageOK
+	})
+}
+
+func TestArticleListJSON(t *testing.T) {
+	r := getRouter(true)
+	r.GET("/article/view/:article_id", getArticle)
+
+	req, _ := http.NewRequest("GET", "/article/view/1", nil)
+
+	req.Header.Set("Accept", "application/JSON")
+
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		typeOK := (w.HeaderMap.Get("content-type") == "application/JSON")
+
+		return typeOK
+	})
+}
+
+func TestArticleListXML(t *testing.T) {
+	r := getRouter(true)
+	r.GET("/article/view/:article_id", getArticle)
+
+	req, _ := http.NewRequest("GET", "/article/view/1", nil)
+
+	req.Header.Set("Accept", "application/XML")
+
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		typeOK := (w.HeaderMap.Get("content-type") == "application/XML")
+
+		return typeOK
 	})
 }

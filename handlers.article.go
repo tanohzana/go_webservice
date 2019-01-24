@@ -23,14 +23,13 @@ func showIndexPage(c *gin.Context) {
 func getArticle(c *gin.Context) {
 	if articleID, err := strconv.Atoi(c.Param("article_id")); err == nil {
 		if article, err := getArticleByID(articleID); err == nil {
-			c.HTML(
-				http.StatusOK,
-				"article.html",
+			render(
+				*c,
 				gin.H{
 					"title":   article.Title,
 					"payload": article.Content,
 				},
-			)
+				"article.html")
 		} else {
 			c.AbortWithError(http.StatusNotFound, err)
 		}
