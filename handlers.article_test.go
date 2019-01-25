@@ -30,10 +30,12 @@ func TestArticleListJSON(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", "/article/view/1", nil)
 
-	req.Header.Set("Accept", "application/JSON")
+	req.Header.Set("Accept", "application/json")
 
 	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
-		typeOK := (w.HeaderMap.Get("content-type") == "application/JSON")
+		mimeType := getMIMETypeFromHeader(w.HeaderMap.Get("content-type"))
+		expected := "application/json"
+		typeOK := (mimeType == expected)
 
 		return typeOK
 	})
@@ -45,11 +47,21 @@ func TestArticleListXML(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", "/article/view/1", nil)
 
-	req.Header.Set("Accept", "application/XML")
+	req.Header.Set("Accept", "application/xml")
 
 	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
-		typeOK := (w.HeaderMap.Get("content-type") == "application/XML")
+		mimeType := getMIMETypeFromHeader(w.HeaderMap.Get("content-type"))
+		expected := "application/xml"
+		typeOK := (mimeType == expected)
 
 		return typeOK
 	})
+}
+
+func getMIMETypeFromHeader(contentTypeHeader string) string {
+	contentTypeHeader = strings.ToLower(contentTypeHeader)
+	contentTypeSplit := strings.Split(contentTypeHeader, ";")
+	mimeType := contentTypeSplit[0]
+
+	return mimeType
 }

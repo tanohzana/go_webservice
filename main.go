@@ -20,11 +20,11 @@ func main() {
 
 func render(c gin.Context, data gin.H, template string) {
 	switch c.Request.Header.Get("Accept") {
-	case "application/JSON":
+	case "application/json":
 		c.JSON(http.StatusOK, data["payload"])
-	case "application/XML":
+	case "application/xml":
 		c.XML(http.StatusOK, data["payload"])
 	default:
-		c.HTML(http.StatusOK, template, data["payload"])
+		c.HTML(http.StatusOK, template, data)
 	}
 }
